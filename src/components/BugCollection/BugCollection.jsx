@@ -7,16 +7,21 @@ import bugs from "../../store/bugs";
 import Message from "../Message/Message";
 import EditBugForm from "../EditBugForm/EditBugForm";
 import NewBugForm from "../NewBugForm/NewBugForm";
+import { withTheme, withStyles, Divider } from "@material-ui/core";
 
+const styles = {
+  list: {
+    marginTop: (props) => props.theme.spacing(2),
+    marginBottom: (props) => props.theme.spacing(2),
+  },
+};
 class BugCollection extends Component {
   render() {
     return (
       <>
         {this.renderNoBugsMessage()}
         {this.renderBugList()}
-        {/* <Fab color="primary" aria-label="add" data-testid="add-button-button">
-          <AddIcon />
-        </Fab> */}
+        <Divider />
         <NewBugForm onChange={(newBug) => this.props.addBug(newBug)} />
       </>
     );
@@ -39,10 +44,17 @@ class BugCollection extends Component {
       return null;
     }
 
-    return this.props.bugs.list.map((b) => b.description);
-    // return this.props.bugs.list.map((bug, key) => (
-    //   // <BugForm key={key} bug={bug} onChange={(b) => this.props.updateBug(b)} />
-    // ));
+    return (
+      <div className={this.props.classes.list}>
+        {this.props.bugs.list.map((bug, key) => (
+          <EditBugForm
+            key={key}
+            bug={bug}
+            onChange={(b) => this.props.updateBug(b)}
+          />
+        ))}
+      </div>
+    );
   }
 }
 
@@ -65,6 +77,10 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   loadBugs: dispatch(bugs.actions.load()),
   addBug: (newBug) => dispatch(bugs.actions.add(newBug.description)),
+  updateBug: (bug) => dispatch(bugs.actions.update(bug.description)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(BugCollection);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withTheme(withStyles(styles)(BugCollection)));

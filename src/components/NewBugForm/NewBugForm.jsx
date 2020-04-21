@@ -12,14 +12,13 @@ import ArchiveIcon from "@material-ui/icons/Archive";
 
 const styles = {
   root: {
+    marginTop: (props) => props.theme.spacing(2),
     padding: "2px 4px",
     display: "flex",
     alignItems: "center",
   },
   input: {
-    marginLeft: (props) => {
-      return props.theme.spacing(1);
-    },
+    marginLeft: (props) => props.theme.spacing(1),
     flex: 1,
   },
   iconButton: {
@@ -88,6 +87,7 @@ class NewBugForm extends Component {
         <Checkbox
           data-testid={`${idPrefix}-bug-checkbox`}
           checked={this.state.resolved}
+          disabled={!this.state.id}
           onChange={(e) => this.setState({ resolved: e.target.checked })}
         />
         <InputBase
@@ -124,8 +124,11 @@ class NewBugForm extends Component {
   }
 
   bubbleChange = () => {
+    if (!this.state.description) {
+      return;
+    }
+
     this.props.onChange({
-      id: this.state.id,
       description: this.state.description,
       resolved: this.state.resolved,
     });

@@ -12,6 +12,8 @@ import ArchiveIcon from "@material-ui/icons/Archive";
 
 const styles = {
   root: {
+    marginTop: (props) => props.theme.spacing(0.5),
+    marginBottom: (props) => props.theme.spacing(0.5),
     padding: "2px 4px",
     display: "flex",
     alignItems: "center",
@@ -44,7 +46,7 @@ class EditBugForm extends Component {
       this.setState({
         id: bug.id,
         description: bug.description,
-        resolved: bug.resolved,
+        resolved: bug.resolved || false,
       });
     } else {
       this.setState({
@@ -129,13 +131,6 @@ class EditBugForm extends Component {
       description: this.state.description,
       resolved: this.state.resolved,
     });
-
-    // if (!this.state.id) {
-    //   this.setState({
-    //     description: "",
-    //     resolved: false,
-    //   });
-    // }
   };
 }
 
