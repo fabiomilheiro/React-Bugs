@@ -15,6 +15,7 @@ import {
 import { Add as AddIcon, Mood as MoodIcon } from "@material-ui/icons";
 
 import bugs from "../../store/bugs";
+import Message from "../Message/Message";
 
 const BugList = styled(List)({});
 
@@ -22,22 +23,38 @@ class BugCollection extends Component {
   render() {
     return (
       <>
-        {this.props.bugs.list.length === 0 && (
-          <p data-testid="no-bugs">
-            <MoodIcon /> There are no bugs!
-          </p>
-        )}
-        {this.props.bugs.list.length > 0 && (
-          <BugList dense>
-            {this.props.bugs.list.map((bug) => {
-              return this.renderListItem(bug);
-            })}
-          </BugList>
-        )}
+        {this.renderNoBugsMessage()}
+        {this.renderBugList()}
         <Fab color="primary" aria-label="add">
           <AddIcon data-testid="add-bug" />
         </Fab>
       </>
+    );
+  }
+
+  renderNoBugsMessage() {
+    if (this.props.bugs.list.length > 0) {
+      return null;
+    }
+
+    return (
+      <Message icon={<MoodIcon />} id="no-bugs">
+        There are no bugs!
+      </Message>
+    );
+  }
+
+  renderBugList() {
+    if (this.props.bugs.list.length === 0) {
+      return null;
+    }
+
+    return (
+      <BugList dense>
+        {this.props.bugs.list.map((bug) => {
+          return this.renderListItem(bug);
+        })}
+      </BugList>
     );
   }
 
