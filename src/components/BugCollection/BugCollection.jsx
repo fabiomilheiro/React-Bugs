@@ -16,7 +16,7 @@ class BugCollection extends Component {
         {/* <Fab color="primary" aria-label="add" data-testid="add-button-button">
           <AddIcon />
         </Fab> */}
-        <BugForm idPrefix="add" onChange={() => {}} />
+        <BugForm onChange={() => {}} />
       </>
     );
   }
@@ -38,7 +38,9 @@ class BugCollection extends Component {
       return null;
     }
 
-    return <ul></ul>;
+    return this.props.bugs.list.map((bug, key) => (
+      <BugForm key={key} bug={bug} onChange={(b) => this.props.updateBug(b)} />
+    ));
   }
 }
 

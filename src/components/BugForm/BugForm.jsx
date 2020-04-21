@@ -61,25 +61,32 @@ class BugForm extends Component {
   }
 
   render() {
-    const { classes, idPrefix } = this.props;
+    const { classes, bug, onChange } = this.props;
+    const idPrefix = bug ? "edit" : "add";
 
     return (
-      <Paper component="form" className={classes.root}>
+      <Paper
+        component="form"
+        className={classes.root}
+        data-testid={`${idPrefix}-bug-form`}
+      >
         <Checkbox
           data-testid={`${idPrefix}-bug-checkbox`}
           onChange={(e) => this.setState({ checked: e.target.checked })}
         />
         <InputBase
-          data-testid={`${idPrefix}-bug-input`}
           className={classes.input}
           placeholder="Enter bug description"
-          inputProps={{ "aria-label": "Enter bug description" }}
+          inputProps={{
+            "data-testid": `${idPrefix}-bug-input`,
+            "aria-label": "Enter bug description",
+          }}
           onChange={(e) => this.setState({ description: e.target.value })}
-          onBlur={(e) => this.props.onChange(e.target.value)}
+          onBlur={(e) => onChange(e.target.value)}
           onKeyPress={(e) => {
             e.preventDefault();
             if (e.charCode === 13) {
-              this.props.onChange(e.target.value);
+              onChange(e.target.value);
             }
           }}
         />
