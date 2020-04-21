@@ -74,7 +74,7 @@ describe("Bugs", () => {
 
   describe("Assign bug", () => {
     beforeEach(async () => {
-      await store.dispatch(bugs.actions.load());
+      await store.dispatch(bugs.actions.add("X"));
     });
 
     it("assigns user to the bug if patched successfully", async () => {
@@ -99,7 +99,7 @@ describe("Bugs", () => {
 
   describe("Resolve bug", () => {
     beforeEach(async () => {
-      await store.dispatch(bugs.actions.load());
+      await store.dispatch(bugs.actions.add("X"));
     });
 
     it("sets the bug as resolved if patched successfully", async () => {

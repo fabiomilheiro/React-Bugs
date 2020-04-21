@@ -1,13 +1,18 @@
 import React from "react";
 import { Container, CssBaseline } from "@material-ui/core";
 import Header from "./components/Header/Header";
+import BugCollection from "./components/BugCollection/BugCollection";
+import { Provider } from "react-redux";
 
-function App() {
+function App({ store }) {
   return (
-    <Container fixed>
-      <CssBaseline />
-      <Header />
-    </Container>
+    <Provider store={store}>
+      <Container fixed>
+        <CssBaseline />
+        <Header />
+        <BugCollection />
+      </Container>
+    </Provider>
   );
 }
 

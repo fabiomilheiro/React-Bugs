@@ -3,10 +3,13 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "typeface-roboto";
+import configureStore from "./store/configureStore";
+
+const store = configureStore();
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App store={store} />
   </React.StrictMode>,
   document.getElementById("root")
 );

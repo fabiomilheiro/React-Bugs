@@ -1,4 +1,4 @@
-import { Server, Model, Response, RestSerializer, Serializer } from "miragejs";
+import { Server, Model, Response, RestSerializer } from "miragejs";
 
 const AppSerializer = RestSerializer.extend({
   root: false,
@@ -56,7 +56,7 @@ export default function makeServer() {
       },
       seeds(server) {
         server.db.loadData({
-          bugs: [{ description: "1st bug" }],
+          bugs: [],
         });
       },
     });
@@ -64,6 +64,7 @@ export default function makeServer() {
     return server;
   } catch (error) {
     const e = error;
+    console.error(e);
     debugger;
   }
 }
