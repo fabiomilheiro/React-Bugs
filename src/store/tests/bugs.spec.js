@@ -72,6 +72,23 @@ describe("Bugs", () => {
     });
   });
 
+  describe("Update bug", () => {
+    beforeEach(async () => {
+      await store.dispatch(bugs.actions.add("X"));
+    });
+
+    it("updated the bug properties", async () => {
+      const bug = { ...getBugs().list[0] };
+      bug.description = "ABC";
+      bug.resolved = !bug.resolved;
+      bug.userId = 1000;
+
+      await store.dispatch(bugs.actions.update(bug));
+
+      expect(getBug(bug.id)).toEqual(bug);
+    });
+  });
+
   describe("Assign bug", () => {
     beforeEach(async () => {
       await store.dispatch(bugs.actions.add("X"));

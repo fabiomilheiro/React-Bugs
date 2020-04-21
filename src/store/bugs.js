@@ -29,6 +29,12 @@ const slice = createSlice({
       bugs.list.push(payload);
     },
 
+    updated: (bugs, { payload }) => {
+      const index = bugs.list.findIndex((b) => b.id === payload.id);
+
+      bugs.list[index] = payload;
+    },
+
     removed: (bugs, { payload }) => {
       bugs.list = getBug(bugs, payload.id);
     },
@@ -87,6 +93,14 @@ const actions = {
       method: "post",
       data: { description },
       onSuccess: slice.actions.addSucceeded.type,
+    }),
+
+  update: (data) =>
+    api.actions.requestStarted({
+      url: `/bugs/${data.id}`,
+      method: "patch",
+      data: data,
+      onSuccess: slice.actions.updated.type,
     }),
 
   assign: (id, userId) =>
