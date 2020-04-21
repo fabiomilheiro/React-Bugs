@@ -60,19 +60,28 @@ describe("Bug collection", () => {
   });
 
   describe("Adds bugs", () => {
-    it("adds the bug, if validation passes", () => {
+    it("adds the bug, if validation passes", async () => {
       const sut = renderBugCollectionComponent();
 
       const input = sut.getByTestId("add-bug-input");
       fireEvent.change(input, { target: { value: "New bug!" } });
-      fireEvent.keyPress(input, { charCode: 13 });
-      const bugListItems = sut.queryAllByTestId("edit-bug-form");
+      fireEvent.keyPress(input, { key: "Enter", code: 13, charCode: 13 });
 
+      const bugListItems = await sut.findAllByTestId("edit-bug-form");
       expect(bugListItems).toHaveLength(1);
     });
 
-    it("does not add the bug, if validation fails", () => {});
+    it("does not add the bug, if error", async () => {
+      const sut = renderBugCollectionComponent();
+      server.throwApiError = true;
 
-    it("does not add the bug, if error", () => {});
+      const input = sut.getByTestId("add-bug-input");
+      fireEvent.change(input, { target: { value: "Faulty bug" } });
+      fireEvent.keyPress(input, { code: 13, charCode: 13 });
+
+      const noBugsMessage = await sut.findByTestId("no-bugs");
+
+      expect(noBugsMessage).toBeInTheDocument();
+    });
   });
 });

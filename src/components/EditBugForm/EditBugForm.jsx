@@ -90,7 +90,11 @@ class EditBugForm extends Component {
         <Checkbox
           data-testid={`${idPrefix}-bug-checkbox`}
           checked={this.state.resolved}
-          onChange={(e) => this.setState({ resolved: e.target.checked })}
+          onChange={(e) => {
+            this.setState({ resolved: e.target.checked }, () =>
+              this.bubbleChange()
+            );
+          }}
         />
         <InputBase
           className={classes.input}
@@ -103,6 +107,7 @@ class EditBugForm extends Component {
           onChange={(e) => this.setState({ description: e.target.value })}
           onBlur={(e) => this.bubbleChange()}
           onKeyPress={(e) => {
+            debugger;
             if (e.charCode === 13) {
               e.preventDefault();
               this.bubbleChange();

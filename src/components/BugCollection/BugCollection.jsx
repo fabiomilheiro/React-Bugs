@@ -45,7 +45,11 @@ class BugCollection extends Component {
     }
 
     return (
-      <div className={this.props.classes.list}>
+      <div
+        className={this.props.classes.list}
+        data-testid="bug-list"
+        data-count={this.props.bugs.list}
+      >
         {this.props.bugs.list.map((bug, key) => (
           <EditBugForm
             key={key}
@@ -77,7 +81,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   loadBugs: dispatch(bugs.actions.load()),
   addBug: (newBug) => dispatch(bugs.actions.add(newBug.description)),
-  updateBug: (bug) => dispatch(bugs.actions.update(bug.description)),
+  updateBug: (bug) => dispatch(bugs.actions.update(bug)),
 });
 
 export default connect(
