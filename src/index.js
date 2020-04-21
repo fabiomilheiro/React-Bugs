@@ -4,8 +4,10 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "typeface-roboto";
 import configureStore from "./store/configureStore";
+import makeServer from "./store/tests/server";
 
 const store = configureStore();
+makeServer();
 
 ReactDOM.render(
   <React.StrictMode>

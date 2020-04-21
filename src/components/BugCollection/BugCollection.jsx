@@ -5,7 +5,8 @@ import { Mood as MoodIcon } from "@material-ui/icons";
 
 import bugs from "../../store/bugs";
 import Message from "../Message/Message";
-import BugForm from "../BugForm/BugForm";
+import EditBugForm from "../EditBugForm/EditBugForm";
+import NewBugForm from "../NewBugForm/NewBugForm";
 
 class BugCollection extends Component {
   render() {
@@ -16,7 +17,7 @@ class BugCollection extends Component {
         {/* <Fab color="primary" aria-label="add" data-testid="add-button-button">
           <AddIcon />
         </Fab> */}
-        <BugForm onChange={() => {}} />
+        <NewBugForm onChange={(newBug) => this.props.addBug(newBug)} />
       </>
     );
   }
@@ -38,9 +39,10 @@ class BugCollection extends Component {
       return null;
     }
 
-    return this.props.bugs.list.map((bug, key) => (
-      <BugForm key={key} bug={bug} onChange={(b) => this.props.updateBug(b)} />
-    ));
+    return this.props.bugs.list.map((b) => b.description);
+    // return this.props.bugs.list.map((bug, key) => (
+    //   // <BugForm key={key} bug={bug} onChange={(b) => this.props.updateBug(b)} />
+    // ));
   }
 }
 
@@ -62,6 +64,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   loadBugs: dispatch(bugs.actions.load()),
+  addBug: (newBug) => dispatch(bugs.actions.add(newBug.description)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(BugCollection);
