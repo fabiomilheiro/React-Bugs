@@ -1,23 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import {
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListItemSecondaryAction,
-  Checkbox,
-  Avatar,
-  styled,
-  Fab,
-} from "@material-ui/core";
-import { Add as AddIcon, Mood as MoodIcon } from "@material-ui/icons";
+import { Mood as MoodIcon } from "@material-ui/icons";
 
 import bugs from "../../store/bugs";
 import Message from "../Message/Message";
-
-const BugList = styled(List)({});
+import BugForm from "../BugForm/BugForm";
 
 class BugCollection extends Component {
   render() {
@@ -25,9 +13,10 @@ class BugCollection extends Component {
       <>
         {this.renderNoBugsMessage()}
         {this.renderBugList()}
-        <Fab color="primary" aria-label="add">
-          <AddIcon data-testid="add-bug" />
-        </Fab>
+        {/* <Fab color="primary" aria-label="add" data-testid="add-button-button">
+          <AddIcon />
+        </Fab> */}
+        <BugForm idPrefix="add" onChange={() => {}} />
       </>
     );
   }
@@ -49,41 +38,7 @@ class BugCollection extends Component {
       return null;
     }
 
-    return (
-      <BugList dense>
-        {this.props.bugs.list.map((bug) => {
-          return this.renderListItem(bug);
-        })}
-      </BugList>
-    );
-  }
-
-  renderListItem(bug) {
-    const labelId = `checkbox-list-secondary-label-${bug.id}`;
-
-    return (
-      <ListItem key={bug.id} button>
-        <ListItemAvatar>
-          <Avatar
-            alt={`Avatar n°${bug.id}`}
-            src={`/images/avar/${bug.id}.jpg`}
-          />
-        </ListItemAvatar>
-        <ListItemText
-          id={labelId}
-          primary={`Line item ${bug.id}`}
-          data-testid="bug-list-item"
-        />
-        <ListItemSecondaryAction>
-          <Checkbox
-            edge="end"
-            onChange={() => {}}
-            checked={bug.resolved}
-            inputProps={{ "aria-labelledby": bug.id }}
-          />
-        </ListItemSecondaryAction>
-      </ListItem>
-    );
+    return <ul></ul>;
   }
 }
 

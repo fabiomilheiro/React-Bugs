@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import BugCollection from "./BugCollection";
 import bugs from "../../store/bugs";
 import configureStore from "../../store/configureStore";
@@ -20,8 +20,8 @@ describe("Bug collection", () => {
     }
   });
 
-  function createBugCollectionComponent() {
-    return (
+  function renderBugCollectionComponent() {
+    return render(
       <Provider store={store}>
         <BugCollection />
       </Provider>
@@ -29,33 +29,50 @@ describe("Bug collection", () => {
   }
 
   describe("Elements", () => {
-    it("renders the add button", async () => {
-      const app = render(createBugCollectionComponent());
+    it("renders the add bug form", async () => {
+      const sut = renderBugCollectionComponent();
 
-      const addBugButton = app.getByTestId("add-bug");
+      const form = sut.getByTestId("add-bug-form");
 
-      expect(addBugButton).not.toBe(null);
+      expect(form).not.toBe(null);
     });
   });
 
   describe("Loads the bugs", () => {
     it("renders 'No bugs', if none", () => {
-      const app = render(createBugCollectionComponent());
+      const sut = renderBugCollectionComponent();
 
-      const noBugsMessage = app.queryByTestId("no-bugs");
+      const noBugsMessage = sut.queryByTestId("no-bugs");
 
       expect(noBugsMessage).toBeInTheDocument();
     });
 
     it("renders the bugs, if any", async () => {
-      await store.dispatch(bugs.actions.add("x"));
-      await store.dispatch(bugs.actions.add("x"));
-      await store.dispatch(bugs.actions.add("x"));
+      await store.dispatch(bugs.actions.add("X"));
+      await store.dispatch(bugs.actions.add("Y"));
+      await store.dispatch(bugs.actions.add("Z"));
 
-      const app = render(createBugCollectionComponent());
+      const sut = renderBugCollectionComponent();
 
-      const bugListItems = app.queryAllByTestId("bug-list-item");
+      const bugListItems = sut.queryAllByTestId("edit-bug-form");
       expect(bugListItems).toHaveLength(3);
     });
+  });
+
+  describe("Adds bugs", () => {
+    it("adds the bug, if validation passes", () => {
+      const sut = renderBugCollectionComponent();
+
+      const input = sut.getByTestId("add-bug-input");
+      fireEvent.change(input, { target: { value: "New bug!" } });
+      fireEvent.keyPress(input, { charCode: 13 });
+      const bugListItems = sut.queryAllByTestId("edit-bug-form");
+
+      expect(bugListItems).toHaveLength(1);
+    });
+
+    it("does not add the bug, if validation fails", () => {});
+
+    it("does not add the bug, if error", () => {});
   });
 });
