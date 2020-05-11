@@ -8,6 +8,7 @@ import {
 import Header from "./components/Header/Header";
 import BugCollection from "./components/BugCollection/BugCollection";
 import { Provider } from "react-redux";
+import Progress from "./components/Progress/Progress";
 
 const theme = createMuiTheme();
 
@@ -15,6 +16,7 @@ function App({ store }) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
+        <Progress />
         <Container fixed>
           <CssBaseline />
           <Header />

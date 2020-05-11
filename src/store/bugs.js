@@ -25,8 +25,17 @@ const slice = createSlice({
       bugs.isLoading = false;
     },
 
+    addStarted: (bugs) => {
+      bugs.isLoading = true;
+    },
+
     addSucceeded: (bugs, { payload }) => {
       bugs.list.push(payload);
+      bugs.isLoading = false;
+    },
+
+    addFailed: (bugs) => {
+      bugs.isLoading = false;
     },
 
     updated: (bugs, { payload }) => {
@@ -92,7 +101,9 @@ const actions = {
       url: "/bugs",
       method: "post",
       data: { description },
+      onStart: slice.actions.addStarted.type,
       onSuccess: slice.actions.addSucceeded.type,
+      onError: slice.actions.addFailed.type,
     }),
 
   update: (data) =>
