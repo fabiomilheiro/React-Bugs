@@ -7,7 +7,6 @@ import bugs from "./bugs";
 import projects from "./projects.js";
 import users from "./users";
 import logger from "./middleware/logger";
-import toast from "./middleware/toast";
 import apiMiddleware from "./middleware/apiMiddleware";
 
 export default function () {
@@ -23,7 +22,6 @@ export default function () {
     middleware: [
       ...getDefaultMiddleware(),
       logger({ isEnabled: false }),
-      toast,
       apiMiddleware,
     ],
   });

@@ -9,16 +9,21 @@ import { Provider } from "react-redux";
 describe("Bug collection", () => {
   let store;
   let server;
-  beforeEach(() => {
-    store = configureStore();
+  beforeAll(() => {
     server = makeServer();
   });
-
-  afterEach(() => {
+  afterAll(() => {
     if (server) {
       server.shutdown();
     }
   });
+
+  beforeEach(() => {
+    store = configureStore();
+    server.db.bugs = [];
+    server.throwApiError = false;
+  });
+  afterEach(() => {});
 
   function renderBugCollectionComponent() {
     return render(
