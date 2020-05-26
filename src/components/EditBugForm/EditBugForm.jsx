@@ -8,7 +8,9 @@ import {
   withStyles,
   withTheme,
 } from "@material-ui/core";
-import ArchiveIcon from "@material-ui/icons/Archive";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { connect } from "react-redux";
+import bugs from "../../store/bugs";
 
 const styles = {
   root: {
@@ -37,21 +39,7 @@ const styles = {
 };
 
 class EditBugForm extends Component {
-  state = {
-    description: "",
-    resolved: false,
-    savedDescription: "",
-  };
-
-  componentDidMount() {
-    const { bug } = this.props;
-    this.setState({
-      id: bug.id,
-      description: bug.description,
-      resolved: bug.resolved || false,
-      savedDescription: bug.description,
-    });
-  }
+  componentDidMount() {}
 
   render() {
     const { classes, bug } = this.props;
@@ -65,12 +53,8 @@ class EditBugForm extends Component {
       >
         <Checkbox
           data-testid={`${idPrefix}-bug-checkbox`}
-          checked={this.state.resolved}
-          onChange={(e) => {
-            this.setState({ resolved: e.target.checked }, () =>
-              this.bubbleChange()
-            );
-          }}
+          checked={bug.resolved}
+          onChange={(e) => this.saveBug({ resolved: e.target.checked })}
         />
         <InputBase
           className={classes.input}
@@ -79,20 +63,12 @@ class EditBugForm extends Component {
             "data-testid": `${idPrefix}-bug-input`,
             "aria-label": "Enter bug description",
           }}
-          value={this.state.description}
-          onChange={(e) => this.setState({ description: e.target.value })}
-          onBlur={(e) => {
-            if (this.isDirty()) {
-              this.bubbleChange();
-            }
-          }}
+          value={bug.description}
+          onChange={(e) => this.changeBugDescription(e.target.value)}
           onKeyPress={(e) => {
             if (e.charCode === 13) {
               e.preventDefault();
-
-              if (this.isDirty()) {
-                this.bubbleChange();
-              }
+              this.saveBug({ description: e.target.value });
             }
           }}
         />
@@ -103,8 +79,9 @@ class EditBugForm extends Component {
               color="primary"
               className={classes.iconButton}
               aria-label="directions"
+              onClick={() => this.props.removeBug(bug.id)}
             >
-              <ArchiveIcon />
+              <DeleteIcon />
             </IconButton>
           </>
         )}
@@ -112,22 +89,33 @@ class EditBugForm extends Component {
     );
   }
 
-  isDirty = () => {
-    return this.state.description !== this.state.savedDescription;
+  changeBugDescription = (newDescription) => {
+    const bug = {
+      ...this.props.bug,
+      description: newDescription,
+    };
+
+    this.props.changeBugDescription(bug);
   };
-  bubbleChange = () => {
-    this.setState(
-      (previousState) => ({
-        savedDescription: previousState.description,
-      }),
-      () =>
-        this.props.onChange({
-          id: this.state.id,
-          description: this.state.description,
-          resolved: this.state.resolved,
-        })
-    );
+
+  saveBug = (bugChanges) => {
+    const bug = {
+      ...this.props.bug,
+      ...bugChanges,
+    };
+
+    this.props.saveBug(bug);
   };
 }
 
-export default withTheme(withStyles(styles)(EditBugForm));
+const mapStateToProps = (state) => ({});
+const mapDispatchToProps = (dispatch) => ({
+  changeBugDescription: (bug) => dispatch(bugs.actions.changeDescription(bug)),
+  saveBug: (bug) => dispatch(bugs.actions.save(bug)),
+  removeBug: (id) => dispatch(bugs.actions.remove(id)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withTheme(withStyles(styles)(EditBugForm)));

@@ -81,7 +81,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   loadBugs: dispatch(bugs.actions.load()),
   addBug: (newBug) => dispatch(bugs.actions.add(newBug.description)),
-  updateBug: (bug) => dispatch(bugs.actions.update(bug)),
 });
 
 export default connect(

@@ -1,13 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import api from "./api";
-import moment from "moment";
 
 const slice = createSlice({
   initialState: {
     list: [],
     isLoading: false,
-    lastFetch: null,
   },
   name: "bugs",
   reducers: {
@@ -18,7 +16,6 @@ const slice = createSlice({
     loadSucceeded: (bugs, { payload }) => {
       bugs.list = payload;
       bugs.isLoading = false;
-      bugs.lastFetch = Date.now();
     },
 
     loadFailed: (bugs) => {
@@ -30,6 +27,7 @@ const slice = createSlice({
     },
 
     addSucceeded: (bugs, { payload }) => {
+      payload.resolved = payload.resolved || false;
       bugs.list.push(payload);
       bugs.isLoading = false;
     },
@@ -38,20 +36,50 @@ const slice = createSlice({
       bugs.isLoading = false;
     },
 
-    updated: (bugs, { payload }) => {
+    descriptionChanged: (bugs, { payload }) => {
+      const bug = getBug(bugs, payload.id);
+      bug.description = payload.description;
+    },
+
+    updateStarted: (bugs) => {
+      bugs.isLoading = true;
+    },
+
+    updateSucceeded: (bugs, { payload }) => {
+      bugs.isLoading = false;
       const index = bugs.list.findIndex((b) => b.id === payload.id);
 
       bugs.list[index] = payload;
     },
 
-    removed: (bugs, { payload }) => {
-      bugs.list = getBug(bugs, payload.id);
+    updateFailed: (bugs) => {
+      bugs.isLoading = false;
     },
 
-    resolved: (bugs, { payload }) => {
+    removeStarted: (bugs) => {
+      bugs.isLoading = true;
+    },
+
+    removeSucceeded: (bugs, { payload }) => {
+      bugs.isLoading = false;
+      bugs.list = bugs.list.filter((b) => b.id !== payload.id);
+    },
+
+    removeFailed: (bugs) => {
+      bugs.isLoading = false;
+    },
+
+    resolveStarted: (bugs) => {
+      bugs.isLoading = true;
+      console.log("bugs: ", bugs);
+    },
+    resolveSucceeded: (bugs, payload) => {
+      bugs.isLoading = false;
       const bug = getBug(bugs, payload.id);
       bug.resolved = payload.resolved;
+      console.log("bugs: ", bugs);
     },
+    resolveFailed: (bugs) => (bugs.isLoading = false),
 
     assigned: (bugs, { payload }) => {
       const bug = getBug(bugs, payload.id);
@@ -78,14 +106,6 @@ const selectors = {
 
 const actions = {
   load: () => (dispatch, getState) => {
-    const { lastFetch } = getState().entities.bugs;
-
-    var minutesSinceLastUpdate = moment().diff(moment(lastFetch), "minutes");
-
-    if (lastFetch && minutesSinceLastUpdate < 10) {
-      return;
-    }
-
     return dispatch(
       api.actions.requestStarted({
         url: "/bugs",
@@ -106,12 +126,18 @@ const actions = {
       onError: slice.actions.addFailed.type,
     }),
 
-  update: (data) =>
+  changeDescription: (data) => {
+    return slice.actions.descriptionChanged(data);
+  },
+
+  save: (data) =>
     api.actions.requestStarted({
       url: `/bugs/${data.id}`,
       method: "patch",
       data: data,
-      onSuccess: slice.actions.updated.type,
+      onStart: slice.actions.updateStarted.type,
+      onSuccess: slice.actions.updateSucceeded.type,
+      onError: slice.actions.updateFailed.type,
     }),
 
   assign: (id, userId) =>
@@ -127,7 +153,19 @@ const actions = {
       url: `/bugs/${id}`,
       method: "patch",
       data: { resolved: true },
-      onSuccess: slice.actions.resolved.type,
+      onStart: slice.actions.resolveStarted.type,
+      onSuccess: slice.actions.resolveSucceeded.type,
+      onError: slice.actions.resolveFailed.type,
+    }),
+
+  remove: (id) =>
+    api.actions.requestStarted({
+      url: `/bugs/${id}`,
+      method: "patch",
+      data: { removed: true },
+      onStart: slice.actions.removeStarted.type,
+      onSuccess: slice.actions.removeSucceeded.type,
+      onError: slice.actions.removeFailed.type,
     }),
 };
 

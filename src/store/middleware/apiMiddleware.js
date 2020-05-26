@@ -30,7 +30,7 @@ const apiMiddleware = ({ dispatch }) => (next) => async (action) => {
     if (payload.onSuccess) {
       dispatch({
         type: payload.onSuccess,
-        payload: response.data,
+        payload: response.data || payload.data,
       });
     }
 
