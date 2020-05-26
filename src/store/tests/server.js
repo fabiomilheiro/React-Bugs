@@ -24,7 +24,7 @@ export default function makeServer() {
       routes() {
         this.namespace = "api";
         this.urlPrefix = "http://localhost:9001/";
-        this.timing = 1000;
+        this.timing = 200;
         this.resource("bug");
         this.get("/bugs", (schema, request) => {
           if (this.throwApiError) {

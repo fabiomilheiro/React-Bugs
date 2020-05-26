@@ -27,6 +27,9 @@ const styles = {
   iconButton: {
     padding: 10,
   },
+  resolved: {
+    color: "#3f3",
+  },
   divider: {
     height: 28,
     margin: 4,
@@ -37,49 +40,22 @@ class EditBugForm extends Component {
   state = {
     description: "",
     resolved: false,
+    savedDescription: "",
   };
 
   componentDidMount() {
     const { bug } = this.props;
-
-    if (bug) {
-      this.setState({
-        id: bug.id,
-        description: bug.description,
-        resolved: bug.resolved || false,
-      });
-    } else {
-      this.setState({
-        description: "",
-        resolved: false,
-      });
-    }
-  }
-
-  componentDidUpdate(previousProps, previousState) {
-    // if (this.havePropsChanged(previousProps)) {
-    //   const { bug } = this.props;
-    //   this.setState({
-    //     description: bug.description,
-    //     resolved: bug.resolved,
-    //   });
-    // }
-  }
-
-  havePropsChanged(previousProps) {
-    if (!previousProps.bug) {
-      return null;
-    }
-
-    return (
-      previousProps.bug.description !== this.props.bug.description ||
-      previousProps.bug.resolved !== this.props.bug.resolved
-    );
+    this.setState({
+      id: bug.id,
+      description: bug.description,
+      resolved: bug.resolved || false,
+      savedDescription: bug.description,
+    });
   }
 
   render() {
     const { classes, bug } = this.props;
-    const idPrefix = bug ? "edit" : "add";
+    const idPrefix = "edit";
 
     return (
       <Paper
@@ -105,12 +81,18 @@ class EditBugForm extends Component {
           }}
           value={this.state.description}
           onChange={(e) => this.setState({ description: e.target.value })}
-          onBlur={(e) => this.bubbleChange()}
+          onBlur={(e) => {
+            if (this.isDirty()) {
+              this.bubbleChange();
+            }
+          }}
           onKeyPress={(e) => {
-            debugger;
             if (e.charCode === 13) {
               e.preventDefault();
-              this.bubbleChange();
+
+              if (this.isDirty()) {
+                this.bubbleChange();
+              }
             }
           }}
         />
@@ -130,12 +112,21 @@ class EditBugForm extends Component {
     );
   }
 
+  isDirty = () => {
+    return this.state.description !== this.state.savedDescription;
+  };
   bubbleChange = () => {
-    this.props.onChange({
-      id: this.state.id,
-      description: this.state.description,
-      resolved: this.state.resolved,
-    });
+    this.setState(
+      (previousState) => ({
+        savedDescription: previousState.description,
+      }),
+      () =>
+        this.props.onChange({
+          id: this.state.id,
+          description: this.state.description,
+          resolved: this.state.resolved,
+        })
+    );
   };
 }
 
